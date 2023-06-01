@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "787602166813",
+    "project_id": "dtchecker-6e966",
+    "storage_bucket": "dtchecker-6e966.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:787602166813:android:99c394882d0cbc049c22f4",
+        "android_client_info": {
+          "package_name": "com.ontimemobile.newfcheckproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "787602166813-07oq9t6hst61v426gdorak2hao2976gm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ontimemobile.newfcheckproject",
+            "certificate_hash": "9bdd5cd2969b760bb62f02f1343620f58f27815b"
+          }
+        },
+        {
+          "client_id": "787602166813-4um07qtdampg1p3cgc5qpmllk16vl7gk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoL9PLWkhaB7c5p5rOr_LYb0FDuK_ZGRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "787602166813-4um07qtdampg1p3cgc5qpmllk16vl7gk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "787602166813-raoj9gpt4tp6lgf6a10kijo53dh9hjk3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ontimemobile.newfcheckproject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
