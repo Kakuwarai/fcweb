@@ -1,27 +1,17 @@
-# Use the official Flutter Docker image as the base image
-FROM cirrusci/flutter
-
- 
+# Use the official Flutter base image
+FROM cirrusci/flutter:stable
 
 # Set the working directory inside the container
 WORKDIR /app
 
- 
+# Copy the pubspec files to the container
+COPY pubspec.* /app/
 
-# Copy the pubspec.yaml and pubspec.lock files to the container
-COPY pubspec.* ./
-
- 
-
-# Run Flutter pub get to fetch the dependencies
+# Run the flutter pub get command to fetch the dependencies
 RUN flutter pub get
 
- 
+# Copy the rest of the project files to the container
+COPY . /app/
 
-# Copy the entire project directory to the container
-COPY . .
-
- 
-
-# Build the Flutter web application
-RUN flutter build web
+# Build the Flutter app
+RUN flutter build apk
