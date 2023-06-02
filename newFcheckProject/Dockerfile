@@ -23,10 +23,5 @@ COPY . .
 
  
 
-# Build the Flutter application in release mode
-RUN flutter build apk --release
-
- 
-
-# Specify the command to run when the container starts
-CMD ["flutter", "run", "--release"]
+# Build the Flutter web application
+RUN flutter build web
