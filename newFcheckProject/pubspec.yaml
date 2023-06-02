@@ -62,6 +62,7 @@ dependencies:
   hive_flutter: ^1.1.0
   http_parser: ^4.0.2
   js: ^0.6.7
+  permission_handler: ^10.2.0
 
 #  new_version: ^0.3.1
 #  flutter_app_version_checker: ^0.3.2

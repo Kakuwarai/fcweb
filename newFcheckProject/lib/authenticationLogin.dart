@@ -82,6 +82,9 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                   padding: EdgeInsets.only(top: screenHeight / 8),
                   child: Column(
                     children: [
+                      Column(children: [
+                        Text(bottom > 0?"":"Version: 1.0.5",style: TextStyle(color: Colors.white),),
+                      ],),
                       Text(bottom > 0?"":
                         "OnTime Mobile",
                         style: GoogleFonts.montserrat(

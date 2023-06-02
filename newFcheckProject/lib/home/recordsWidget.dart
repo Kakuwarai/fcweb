@@ -12,7 +12,7 @@ getRecords(setState)async{
   var response = await http.post(
       Uri.parse("${apiLink()}api/FcAttendances/getEmployeeRecords"),
       body: {
-        "employeeId":Hive.box("LocalStorage").get("employees")
+        "employeeId":Hive.box("LocalStorage").get("employees")["employeeId"].toString()
         //"employeeId":(await DBProvider.db.getEmployeesData("Id")).toString(),
       });
 
