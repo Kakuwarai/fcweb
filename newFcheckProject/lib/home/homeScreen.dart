@@ -11,6 +11,8 @@ import 'package:newfcheckproject/home/recordsWidget.dart';
 import 'package:newfcheckproject/offlineDatabase/sqfLiteDatabase.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:webviewx/webviewx.dart';
+import '../deviceInfo.dart';
 import '../officeAndWFH/WFHWidget.dart';
 import '../officeAndWFH/officeWidget.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
@@ -67,6 +69,7 @@ class _homeScreen extends State<homeScreen> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    forIos();
     var type = Hive.box("LocalStorage").get("employees") == null?null:Hive.box("LocalStorage").get("employees")["id"];
 
     if(type == null || type == "[]" || type == ""){
@@ -111,6 +114,16 @@ class _homeScreen extends State<homeScreen> with TickerProviderStateMixin {
     });
 
     super.initState();
+  }
+
+  forIos()async{
+
+    var platforms  = await deviceinfo("platform");
+
+    if(!platforms.toString().toLowerCase().contains("iphone")){
+      Navigator.pushReplacementNamed(context, "/forIOS");
+    }
+
   }
 
   locationpermision()async{
@@ -496,6 +509,7 @@ if(coordinator == "else"){
   List<Placemark> placemarks = [];
 
   nominatim()async{
+
     var response = await http.get(Uri.parse("https://nominatim.openstreetmap.org/reverse?lat=${position.latitude}&lon=${position.longitude}&format=json"),
     );
 
@@ -505,6 +519,7 @@ if(coordinator == "else"){
     setState(() {
 
     });
+
   }
 
   main(context) async{
@@ -531,6 +546,8 @@ if(coordinator == "else"){
 
 
         await nominatim();
+
+
         //print();
         //print("${position.latitude} - ${position.longitude}");
 
@@ -558,7 +575,11 @@ if(coordinator == "else"){
 
       }catch(e){
         //print(e);
-
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(
+            content: Text("catch: ${e.toString()}"),
+          ),
+        );
         return false;
       }
 
@@ -591,15 +612,22 @@ if(coordinator == "else"){
             if(content == "timeIn"){
 
               if(internet() == false){
-
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('No internet Connection'),
+                  ),
+                );
               }else {
+
                 setState(() {
                   waiting = true;
                 });
                 if (inputimage == true && await main(context) == true) {
+
                   //var allData = await DBProvider.db.getAllData();
                   //var allData = Hive.box("LocalStorage").get("employees");
                   await main(context);
+
                   var datetimenow;
                   if(kIsWeb){
                     datetimenow = DateTime.now();
@@ -610,6 +638,7 @@ if(coordinator == "else"){
 
                   var request = http.MultipartRequest('POST',
                       Uri.parse("${apiLink()}api/FcAttendances/uploadFile"));
+
                   // request.fields['employeeId'] =
                   //     (allData[0]['employeeId']).toString();
                   request.fields['employeeId'] =
@@ -644,7 +673,6 @@ if(coordinator == "else"){
                   // );
                   //
                   if(kIsWeb){
-
                     request.files.add(http.MultipartFile.fromBytes('uploadAttachments', _selectedFile!,
                         contentType: MediaType('application', 'json'), filename: "Any_name"));
 
@@ -659,6 +687,7 @@ if(coordinator == "else"){
 
 
                   var res = await request.send();
+
 
                   if(!kIsWeb){
                     location = "${placemarks[0].street},"
@@ -787,7 +816,7 @@ if(coordinator == "else"){
   }
 
   bool waiting = false;
-
+bool isDrawerOpen = false;
 
 
   @override
@@ -814,6 +843,16 @@ if(coordinator == "else"){
      // ],
      ),
      drawer: nav(),
+       onDrawerChanged: (isOpen) {
+         // write your callback implementation here
+       setState(() {
+         if(isOpen == true){
+           isDrawerOpen = true;
+         }else{
+           isDrawerOpen = false;
+         }
+       });
+       },
      body: cSelectedWidget() == "default"? Center(
        child: Column(
          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -891,154 +930,18 @@ if(coordinator == "else"){
                  controller: _Tabcontroller,children: [
                // officeWidget(setState,context,btnOffice),
                // WFHWidget(setState, context),
-                   SingleChildScrollView(
-                     child: Column(
-                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                       children: [
-/*Center(
-    child: _image == null? Text("no image"): Image.file(_image!),
-),*/
-                         SizedBox(
-                           height: inputimage?500:400,
-                           width: inputimage?500:400,
-                           child:  IconButton(onPressed: (){
-                             getImage(setState,context);
-                           },
-                               icon: inputimage?
-                               (kIsWeb == true? Image.memory(_bytesData!): Image.file(_image!)):
-                               Image.asset('assets/Images/camera.png',) ),),
+              if(isDrawerOpen == false)
+                   WebViewX(
+                     initialContent: 'https://apps.fastlogistics.com.ph/ontime/timeinandout/#/?'
+                         'id=${Hive.box("LocalStorage").get("employees")['employeeId'].toString()}'
+                         '&department=${Hive.box("LocalStorage").get("employees")['department']}'
+                         '&sbu=${Hive.box("LocalStorage").get("employees")['sbu']}'
+                         '&folder=${(Hive.box("LocalStorage").get("employees")['employeeId']).toString()}'
+                         '&fileName=${DateFormat("yyyy dd MM").format(DateTime.now()).toString()}',
+                     width: MediaQuery.of(context).size.width,
+                     height: MediaQuery.of(context).size.height,
+                   ),
 
-                         Row(
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           children: [
-                             const Icon(Icons.location_on,color: Colors.red,),
-                             SizedBox(
-                               width: MediaQuery.of(context).size.width * 0.7,
-                               child: Text(timeIn == "--:--"? "" :
-                               location),
-                             ),
-                           ],),
-                         SizedBox(height: 20,),
-                         Row(
-                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                           children: [
-                             ElevatedButton.icon(
-                                 style:ElevatedButton.styleFrom(
-                                     backgroundColor: Colors.transparent,
-                                     elevation: 0,
-                                     side:const BorderSide(color: Colors.black)
-                                 )
-
-                                 ,onPressed:timeIn !=  ""  || waiting? null:()async{
-
-                               areYouSureDialog(context,setState,"timeIn");
-
-                             }, icon:const Icon(Icons.timer_sharp,color: Colors.blue,),
-                                 label: Text(waiting?"Please Wait.." :
-                                 timeIn != "null" && timeIn !=  "" ? timeIn : "Time In",
-                                   style:const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),)),
-
-                             ElevatedButton.icon(
-                                 style:ElevatedButton.styleFrom(
-                                     backgroundColor: Colors.transparent,
-                                     elevation: 0,
-                                     side:const BorderSide(color: Colors.black)
-                                 ),
-                                 onPressed:(timeOut != "null" && timeOut !=  "") || waiting ? null:()async{
-
-                                   areYouSureDialog(context,setState,"timeOut");
-
-                                 }, icon:const Icon(Icons.timer_off_outlined,color: Colors.red,),
-                                 label: Text(waiting ?"Please Wait..." :
-                                 timeOut != "null" && timeOut !=  "" ? timeOut : "Time Out",
-                                   style:const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),)),
-
-                           ],),
-
-
-//     Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//       children: [
-//         ElevatedButton.icon(
-//             style:ElevatedButton.styleFrom(
-//                 backgroundColor: breaksStop ? Colors.red:Colors.transparent,
-//                 elevation: 0,
-//                 side:const BorderSide(color: Colors.black)
-//             )
-//
-//             ,onPressed: ()async{
-//           var datetimenow = await NTP.now();
-//           var allData = await DBProvider.db.getAllData();
-//           var response = await http.post(
-//               Uri.parse("${apiLink()}api/FcAttendances/siteBreak"),
-//               body: {
-//                 "employeeId":(allData[0]['employeeId']).toString(),
-//                 "time":DateFormat("hh:mm a").format(datetimenow).toString(),
-//
-//               });
-//           if(response.statusCode == 200){
-//             getDataSite(setState);
-// print("success!");
-//           }
-//
-//         }, icon: Icon(Icons.free_breakfast_outlined,color: breaksStop? Colors.white:Colors.blue,),
-//             label: Text(breaksStop ? "Stop!":"Break",
-//               style: TextStyle(color: breaksStop ? Colors.white:Colors.black,
-//                   fontWeight: FontWeight.bold),)),
-//       ],
-//     ),
-                         // Row(
-                         //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                         //   children: [
-                         //     if(breaks[0] != "" && breaks[1] != "")...[
-                         //
-                         //       Text("1st Break: ${
-                         //           (DateFormat("hh:mma").parse(breaks[1].replaceAll(' ', '').toUpperCase())
-                         //               .difference(
-                         //               DateFormat("hh:mma").parse(breaks[0].replaceAll(' ', '').toUpperCase())
-                         //           )).inMinutes
-                         //
-                         //       } Min"),
-                         //
-                         //       if(breaks[2] != "" && breaks[3] != "")...[
-                         //
-                         //         Text("2nd Break: ${
-                         //             (DateFormat("hh:mma").parse(breaks[3].replaceAll(' ', '').toUpperCase())
-                         //                 .difference(
-                         //                 DateFormat("hh:mma").parse(breaks[2].replaceAll(' ', '').toUpperCase())
-                         //             )).inMinutes
-                         //
-                         //         } Min"),
-                         //
-                         //         if(breaks[4] != "" && breaks[5] != "")...[
-                         //
-                         //           Text("3rd Break: ${
-                         //               (DateFormat("hh:mma").parse(breaks[5].replaceAll(' ', '').toUpperCase())
-                         //                   .difference(
-                         //                   DateFormat("hh:mma").parse(breaks[4].replaceAll(' ', '').toUpperCase())
-                         //               )).inMinutes
-                         //
-                         //           } Min")
-                         //
-                         //         ],
-                         //       ],
-                         //
-                         //     ],
-                         //
-                         //   ],
-                         // ),
-
-                         Column(children: [
-                           const Icon(Icons.lock_clock,color: Colors.green,),
-                           Text(totalTime!=""&&totalTime!="null"? totalTime:"--:--"),
-                         ],),
-                         SizedBox(height: 20,),
-                         Column(children: [
-                           Text("Version: 1.0.5"),
-                         ],),
-                       ],
-                     ),
-                   )
              ]),
            )
 

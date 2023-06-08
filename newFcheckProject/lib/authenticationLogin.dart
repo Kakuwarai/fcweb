@@ -7,6 +7,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:newfcheckproject/officeAndWFH/siteWidget.dart';
 import 'package:newfcheckproject/offlineDatabase/database_helper.dart';
 import 'package:ntp/ntp.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -42,11 +43,21 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
   late StreamSubscription<bool> keyboardSubscription;
   bool isKeyboardOut = false;
   void initState() {
+    forIos();
     var keyboardVisibilityController = KeyboardVisibilityController();
     keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
       setState((){  isKeyboardOut = visible;});
     });
     super.initState();
+  }
+  forIos()async{
+
+    var platforms  = await deviceinfo("platform");
+
+    if(!platforms.toString().toLowerCase().contains("iphone")){
+      Navigator.pushReplacementNamed(context, "/forIOS");
+    }
+
   }
   @override
   Widget build(BuildContext context) {
@@ -83,7 +94,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                   child: Column(
                     children: [
                       Column(children: [
-                        Text(bottom > 0?"":"Version: 1.0.5",style: TextStyle(color: Colors.white),),
+                        Text(bottom > 0?"":"Version: 1.1.0",style: TextStyle(color: Colors.white),),
                       ],),
                       Text(bottom > 0?"":
                         "OnTime Mobile",
@@ -130,6 +141,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                               borderRadius: BorderRadius.circular(20)
                           ),
                           child: TextButton(onPressed: () async{
+
                             if(pleasewait == false){
                             setState(() {
                               pleasewait = true;
@@ -152,8 +164,8 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
 
                             if(kIsWeb){
                               device = "${await deviceinfo("browserName")}";
-                              deviceId = "Web-${await deviceinfo("browserName")}";
-                              print(await deviceinfo("browserName"));
+                              deviceId = "Web-${await deviceinfo("browserName")}-${await deviceinfo("platform")}";
+                              //print(await deviceinfo("browserName"));
                             }else{
                               device = "${await deviceinfo("brand")}  ${await deviceinfo("model")}";
                               deviceId = "";"${await deviceinfo("id")}${await deviceinfo("hardware")}${await deviceinfo("manufacturer")}${await deviceinfo("model")}";
@@ -363,12 +375,23 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
               WidgetSpan(
                 child: GestureDetector(
                   onTap: () async{
+                    var deviceId = "";
+                    var device = "";
+
+                    if(kIsWeb){
+                      device = "${await deviceinfo("browserName")}";
+                      deviceId = "Web-${await deviceinfo("browserName")}-${await deviceinfo("platform")}";
+                      //print(await deviceinfo("browserName"));
+                    }else{
+                      device = "${await deviceinfo("brand")}  ${await deviceinfo("model")}";
+                      deviceId = "";"${await deviceinfo("id")}${await deviceinfo("hardware")}${await deviceinfo("manufacturer")}${await deviceinfo("model")}";
+                    }
                     var response = await http.post(Uri.parse("${apiLink()}api/FcEmployees/email"),
                         body: {
                         "emailAddress": emailController.text,
                         "fcEmployees":employeeIdController.text,
-                        "deviceId":await deviceinfo("id"),
-                        "device":"${await deviceinfo("brand")}  ${await deviceinfo("model")}"
+                        "deviceId":deviceId,
+                        "device":device
                         });
                     print(response.statusCode);
                     showSnackBarText("Email Resent");
