@@ -853,110 +853,130 @@ bool isDrawerOpen = false;
          }
        });
        },
-     body: cSelectedWidget() == "default"? Center(
-       child: Column(
-         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-         children: [
-         /* SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: 10,
-            child: ElevatedButton.icon(onPressed:(){
+      body: cSelectedWidget() == "default"?
 
-                allAroundNavigator = "officeTimeIn/Out";
-                dateTimeCheckerPerDay();
 
-            },
-                style: ElevatedButton_styleFrom(),
-              icon: Image.asset('assets/Images/OFFICE-removebg-preview.png',
-                  height: 100,
-                  color: Colors.white),
-                label:const Text("Office",textAlign: TextAlign.center)),
-          ),
-
-           SizedBox(
-             width: MediaQuery.of(context).size.width * 0.9,
-             height: 10,
-             child: ElevatedButton.icon(onPressed:(){
-
-               allAroundNavigator = "workFromHomeIn/Out";
-               dateTimeCheckerPerDay();
-
-             },
-                 style: ElevatedButton_styleFrom(),
-                 icon: Image.asset('assets/Images/WFH-removebg-preview.png',
-                     height: 100,
-                     color: Colors.white, ),
-                 label:const Text("WFH",textAlign: TextAlign.center,)),
-           ),
-
-           SizedBox(
-             width: MediaQuery.of(context).size.width * 0.9,
-             height: 10,
-             child: ElevatedButton.icon(onPressed:(){
-
-               allAroundNavigator = "siteIn/Out";
-               dateTimeCheckerPerDay();
-
-             },
-                 style: ElevatedButton_styleFrom(),
-                 icon: Image.asset('assets/Images/site-removebg-preview.png',
-                     height: 100,
-                     color: Colors.white ),
-                 label: Text("Site",textAlign: TextAlign.center)),
-           ),*/
-
-           TabBar( controller: _Tabcontroller,
-             tabs: [
-               // Column(children: [
-               //   Image.asset('assets/Images/office.png',
-               //       height: 50),
-               //   Text("OFFICE",style: TextStyle(color: Colors.black),)
-               // ],),
-               // Column(children: [
-               //   Image.asset('assets/Images/WFH.png',
-               //       height: 50),
-               //   Text("WFH",style: TextStyle(color: Colors.black),)
-               // ],),
-               Column(children: [
-                 Image.asset('assets/Images/Site.png',
-                     height: 50),
-                 Text("SITE",style: TextStyle(color: Colors.black),)
-               ],),
-             ],
-           ),
-
-           Expanded(
-             child: TabBarView(physics: BouncingScrollPhysics(),
-                 controller: _Tabcontroller,children: [
-               // officeWidget(setState,context,btnOffice),
-               // WFHWidget(setState, context),
-              if(isDrawerOpen == false)
-                   WebViewX(
-                     initialContent: 'https://apps.fastlogistics.com.ph/ontime/timeinandout/#/?'
-                         'id=${Hive.box("LocalStorage").get("employees")['employeeId'].toString()}'
-                         '&department=${Hive.box("LocalStorage").get("employees")['department']}'
-                         '&sbu=${Hive.box("LocalStorage").get("employees")['sbu']}'
-                         '&folder=${(Hive.box("LocalStorage").get("employees")['employeeId']).toString()}'
-                         '&fileName=${DateFormat("yyyy dd MM").format(DateTime.now()).toString()}',
-                     width: MediaQuery.of(context).size.width,
-                     height: MediaQuery.of(context).size.height,
-                   ),
-
-             ]),
-           )
-
-           // Expanded(
-           //   child: TabBarView(physics: BouncingScrollPhysics(),
-           //       controller: _Tabcontroller,children: [
-           //     // officeWidget(setState,context,btnOffice),
-           //     // WFHWidget(setState, context),
-           //     siteWidget(setState, context),
-           //   ]),
-           // )
-       ],
+   Column(
+     children: [
+       if( isDrawerOpen == false)
+       Expanded(
+         child: WebViewX(
+           initialContent: 'https://apps.fastlogistics.com.ph/ontime/timeinandout/#/?'
+               'id=${Hive.box("LocalStorage").get("employees")['employeeId'].toString()}'
+               '&department=${Hive.box("LocalStorage").get("employees")['department']}'
+               '&sbu=${Hive.box("LocalStorage").get("employees")['sbu']}'
+               '&folder=${(Hive.box("LocalStorage").get("employees")['employeeId']).toString()}'
+               '&fileName=${DateFormat("yyyy dd MM").format(DateTime.now()).toString()}',
+           width: MediaQuery.of(context).size.width,
+           height: MediaQuery.of(context).size.height,
+         ),
        ),
-     ):cSelectedWidget() == "records"? SingleChildScrollView(child: recordsWidget(setState,context)):
-     SingleChildScrollView(child: healthCare(setState,context)),
+     ],
+   )
+     // Center(
+     //   child: Column(
+     //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+     //     children: [
+     //     /* SizedBox(
+     //        width: MediaQuery.of(context).size.width * 0.9,
+     //        height: 10,
+     //        child: ElevatedButton.icon(onPressed:(){
+     //
+     //            allAroundNavigator = "officeTimeIn/Out";
+     //            dateTimeCheckerPerDay();
+     //
+     //        },
+     //            style: ElevatedButton_styleFrom(),
+     //          icon: Image.asset('assets/Images/OFFICE-removebg-preview.png',
+     //              height: 100,
+     //              color: Colors.white),
+     //            label:const Text("Office",textAlign: TextAlign.center)),
+     //      ),
+     //
+     //       SizedBox(
+     //         width: MediaQuery.of(context).size.width * 0.9,
+     //         height: 10,
+     //         child: ElevatedButton.icon(onPressed:(){
+     //
+     //           allAroundNavigator = "workFromHomeIn/Out";
+     //           dateTimeCheckerPerDay();
+     //
+     //         },
+     //             style: ElevatedButton_styleFrom(),
+     //             icon: Image.asset('assets/Images/WFH-removebg-preview.png',
+     //                 height: 100,
+     //                 color: Colors.white, ),
+     //             label:const Text("WFH",textAlign: TextAlign.center,)),
+     //       ),
+     //
+     //       SizedBox(
+     //         width: MediaQuery.of(context).size.width * 0.9,
+     //         height: 10,
+     //         child: ElevatedButton.icon(onPressed:(){
+     //
+     //           allAroundNavigator = "siteIn/Out";
+     //           dateTimeCheckerPerDay();
+     //
+     //         },
+     //             style: ElevatedButton_styleFrom(),
+     //             icon: Image.asset('assets/Images/site-removebg-preview.png',
+     //                 height: 100,
+     //                 color: Colors.white ),
+     //             label: Text("Site",textAlign: TextAlign.center)),
+     //       ),*/
+     //
+     //       TabBar( controller: _Tabcontroller,
+     //         tabs: [
+     //           // Column(children: [
+     //           //   Image.asset('assets/Images/office.png',
+     //           //       height: 50),
+     //           //   Text("OFFICE",style: TextStyle(color: Colors.black),)
+     //           // ],),
+     //           // Column(children: [
+     //           //   Image.asset('assets/Images/WFH.png',
+     //           //       height: 50),
+     //           //   Text("WFH",style: TextStyle(color: Colors.black),)
+     //           // ],),
+     //           Column(children: [
+     //             Image.asset('assets/Images/Site.png',
+     //                 height: 50),
+     //             Text("SITE",style: TextStyle(color: Colors.black),)
+     //           ],),
+     //         ],
+     //       ),
+     //
+     //       Expanded(
+     //         child: TabBarView(physics: BouncingScrollPhysics(),
+     //             controller: _Tabcontroller,children: [
+     //           // officeWidget(setState,context,btnOffice),
+     //           // WFHWidget(setState, context),
+     //          if(isDrawerOpen == false)
+     //               WebViewX(
+     //                 initialContent: 'https://apps.fastlogistics.com.ph/ontime/timeinandout/#/?'
+     //                     'id=${Hive.box("LocalStorage").get("employees")['employeeId'].toString()}'
+     //                     '&department=${Hive.box("LocalStorage").get("employees")['department']}'
+     //                     '&sbu=${Hive.box("LocalStorage").get("employees")['sbu']}'
+     //                     '&folder=${(Hive.box("LocalStorage").get("employees")['employeeId']).toString()}'
+     //                     '&fileName=${DateFormat("yyyy dd MM").format(DateTime.now()).toString()}',
+     //                 width: MediaQuery.of(context).size.width,
+     //                 height: MediaQuery.of(context).size.height,
+     //               ),
+     //
+     //         ]),
+     //       )
+     //
+     //       // Expanded(
+     //       //   child: TabBarView(physics: BouncingScrollPhysics(),
+     //       //       controller: _Tabcontroller,children: [
+     //       //     // officeWidget(setState,context,btnOffice),
+     //       //     // WFHWidget(setState, context),
+     //       //     siteWidget(setState, context),
+     //       //   ]),
+     //       // )
+     //   ],
+     //   ),
+     // )
+      :SingleChildScrollView(child: recordsWidget(setState,context)),
 
 
    );

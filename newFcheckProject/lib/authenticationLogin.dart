@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -48,6 +49,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
     keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
       setState((){  isKeyboardOut = visible;});
     });
+    locationpermision();
     super.initState();
   }
   forIos()async{
@@ -58,6 +60,17 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
       Navigator.pushReplacementNamed(context, "/forIOS");
     }
 
+  }
+
+  locationpermision()async{
+
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+
+      await Geolocator.requestPermission();
+
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -94,7 +107,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                   child: Column(
                     children: [
                       Column(children: [
-                        Text(bottom > 0?"":"Version: 1.1.0",style: TextStyle(color: Colors.white),),
+                        Text(bottom > 0?"":"Version: 1.2.1",style: TextStyle(color: Colors.white),),
                       ],),
                       Text(bottom > 0?"":
                         "OnTime Mobile",
@@ -180,20 +193,22 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                               "deviceId":deviceId,
                               "device":device
                             });
-                              print(response.statusCode);
-                            if (response.statusCode == 200) {
-                              if(response.body == "isNull"){
-                                showSnackBarText("Invalid Employee ID");
-                              }
-                              if(response.body == "Account is already logged in to other device"){
-                                showSnackBarText("Account is already logged in to other device");
-                              }
-                              if(response.body == "Email sent"){
-                              setState(() {
-                              screenState = 1;
-                              });}
+                              if (response.statusCode == 200) {
+                                if(response.body == "isNull"){
+                                  showSnackBarText("Invalid Employee ID");
+                                }
+                                if(response.body == "Account is already logged in to other device"){
+                                  showSnackBarText("Account is already logged in to other device");
+                                }
+                                if(response.body == "Email sent"){
+                                  showSnackBarText("Email sent");
+                                  setState(() {
+                                    screenState = 1;
+                                  });}
 
-                            }
+                              }else{
+                                statusDialog(context, "${response.statusCode}: ${response.body}", false);
+                              }
                           }else{
 
 
@@ -228,6 +243,9 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                                // DBProvider.db.newUser(thisEmployee);
                                 Navigator.pushReplacementNamed(context, "/homeScreen");
 }
+                              }else{
+                                statusDialog(context, "${response.statusCode}: ${response.body}", false);
+
                               }
                             }
                             setState(() {
