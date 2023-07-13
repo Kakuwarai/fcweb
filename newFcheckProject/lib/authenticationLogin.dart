@@ -107,7 +107,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                   child: Column(
                     children: [
                       Column(children: [
-                        Text(bottom > 0?"":"Version: 1.2.1",style: TextStyle(color: Colors.white),),
+                        Text(bottom > 0?"":"IOS Version: 1.3.0",style: TextStyle(color: Colors.white),),
                       ],),
                       Text(bottom > 0?"":
                         "OnTime Mobile",
@@ -231,7 +231,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
 
                                   Hive.box("LocalStorage").put("employees",{
                                     "id": 0,
-                                    "employeeId": int.parse(employeeIdController.text),
+                                    "employeeId": employeeIdController.text,
                                     "employeeName":body[1].toString() ,
                                     "dateAndTime": "temporaryData",
                                     "sbu": body[2].toString(),

@@ -8,21 +8,58 @@ import '../offlineDatabase/sqfLiteDatabase.dart';
 import 'healthDeclaration.dart';
 
 var records =[];
-getRecords(setState)async{
+var loadingRecords = false;
+var filteredDateDisplay = "Filter";
+
+getRecords(setState,filteredDate)async{
+  setState((){loadingRecords = true;});
   var response = await http.post(
       Uri.parse("${apiLink()}api/FcAttendances/getEmployeeRecords"),
       body: {
-        "employeeId":Hive.box("LocalStorage").get("employees")["employeeId"].toString()
-        //"employeeId":(await DBProvider.db.getEmployeesData("Id")).toString(),
+        "employeeId":Hive.box("LocalStorage").get("employees")["employeeId"].toString(),
+        "filteredDate":filteredDate??""
       });
 
   if (response.statusCode == 200) {
       records = await jsonDecode(response.body) as List;
       setState((){});
   }
+  setState((){loadingRecords = false;});
 }
 
-recordsWidget(setState,context){
+class recordsWidget extends StatefulWidget {
+  const recordsWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<recordsWidget> createState() => SiteWidgets();
+}
+
+class SiteWidgets extends State<recordsWidget> with TickerProviderStateMixin {
+  @override
+  void initState() {
+    super.initState();
+  }
+  dialogDateTimePicker() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1901, 1),
+        lastDate: DateTime(2100));
+
+    filteredDateDisplay =DateFormat("MM/dd/yyyy")
+        .format(picked!)
+        .toString();
+    getRecords(setState,picked.toString());
+
+    setState(() {
+
+    });
+
+  }
+  @override
+  Widget build(BuildContext context) {
   return Column(
     children: [
       /*SizedBox(
@@ -55,9 +92,37 @@ recordsWidget(setState,context){
           ],
         ),
       )*/
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          ElevatedButton(onPressed: (){
+            filteredDateDisplay = "Filter";
+            getRecords(setState,null);
 
+            setState(() {
+
+            });
+          }, child: Icon(Icons.refresh)),
+
+          SizedBox(width: 10,),
+
+          ElevatedButton(onPressed: (){
+            dialogDateTimePicker();
+          }, child: Row(
+            children: [
+              Icon(Icons.filter_list),
+              Text(filteredDateDisplay),
+            ],
+          )),
+
+          SizedBox(width: 10,),
+        ],
+      ),
       if(records.length == 0)...[
- Container(
+        loadingRecords? Padding(
+          padding: const EdgeInsets.only(top: 200),
+          child: CircularProgressIndicator(),
+        ):Container(
    height: MediaQuery.of(context).size.height,
    child:const Center(child: Text("No Records", style: TextStyle(fontSize: 50,color: Colors.black54))),
 
@@ -66,7 +131,10 @@ recordsWidget(setState,context){
       else...[
 
 
-      SizedBox(
+        loadingRecords? Padding(
+          padding: const EdgeInsets.only(top: 200),
+          child: CircularProgressIndicator(),
+        ):SizedBox(
         height: MediaQuery.of(context).size.height*0.9,
         child: ListView.builder(
           physics: BouncingScrollPhysics(),
@@ -91,7 +159,7 @@ recordsWidget(setState,context){
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(records[index]["workPlace"],style:const TextStyle(color: Colors.black,
+                  Text("${records[index]["workPlace"]} / ${records[index]["workPlaceOut"]}",style:const TextStyle(color: Colors.black,
                   fontWeight: FontWeight.bold),),
                   Text(DateFormat("MM/dd/yyyy").format(DateTime.parse(records[index]["date"])).toString()
                       ,style:const TextStyle(color: Colors.black,
@@ -108,12 +176,27 @@ recordsWidget(setState,context){
                  const Icon(Icons.timer_sharp,color: Colors.blue,),
                   Text("${records[index]["timeIn"]}",style:const TextStyle(color: Colors.black,
                       fontWeight: FontWeight.bold)),
+                  TextButton(onPressed: (){
+                    pictureEvidence(context, records[index]["employeeId"],
+                        records[index]["timeIn"].toString().replaceAll(":", "").replaceAll(" ", ""),
+                        DateFormat("yyyy dd MM").format(DateTime.parse(records[index]["date"])).toString(),
+                        records[index]["date"],"in");
+
+                  }, child: Text("view")),
                 ],),
 
                 Column(children: [
                    const Icon(Icons.timer_off_outlined,color: Colors.red,),
                     Text("${records[index]["timeOut"]}",style:const TextStyle(color: Colors.black,
                         fontWeight: FontWeight.bold)),
+                  TextButton(onPressed: (){
+
+                    pictureEvidence(context, records[index]["employeeId"],
+                        records[index]["timeOut"].toString().replaceAll(":", "").replaceAll(" ", ""),
+                        DateFormat("yyyy dd MM").format(DateTime.parse(records[index]["date"])).toString(),
+                        records[index]["date"],"out");
+
+                  }, child: Text("view")),
                   ],),
 
                 Column(children: [
@@ -155,4 +238,56 @@ recordsWidget(setState,context){
       ]
     ],
   );
+}
+
+  pictureEvidence(context, employeeId, time, date, cdate, status) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Time ${status} image"),
+        actions: [
+          //https://apps.fastlogistics.com.ph/fastdrive//ontimemobile/220911842/2023 21 06/
+          Image.network('https://apps.fastlogistics.com.ph/fastdrive//ontimemobile/'
+              '${employeeId}/'
+              '${date}/'
+              '${time}${employeeId}.jpg',loadingBuilder: (context, child, loadingProgress) {
+
+            if (loadingProgress == null) {
+              return child;
+            }
+
+            return Center(child: CircularProgressIndicator());
+          },errorBuilder: (context, error, stackTrace) {
+            DateTime dates = DateTime.parse(DateFormat("yyyy-MM-dd").format(DateTime.parse(cdate)));
+
+            final today = DateTime(2023, 06, 22);
+            final todays = DateTime(2023, 06, 23);
+            final fiftyDaysAgo = today.difference(todays).inMinutes;
+
+            if(fiftyDaysAgo <= 0){
+
+              return TextButton(onPressed: (){
+
+                Navigator.of(context).pop();
+                pictureEvidence(context, employeeId, "0$time", date, cdate,status);
+              }, child: Text("click if your time is older than jun 23, 2023"));
+            }else{
+
+              return Center(child: Text("Failed to load image"));
+            }
+            print(fiftyDaysAgo);
+
+            return Text("asdasd");
+          },),
+          ElevatedButton(
+              style: TextButton.styleFrom(backgroundColor: Colors.green),
+              onPressed: () async {
+                Navigator.pop(context, true);
+              },
+              child: const Text('Ok')),
+        ],
+      ),
+    );
+  }
+
 }

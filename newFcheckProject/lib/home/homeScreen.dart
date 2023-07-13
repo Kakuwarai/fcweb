@@ -246,7 +246,7 @@ class _homeScreen extends State<homeScreen> with TickerProviderStateMixin {
                 homePageNav = false;
                 healthdecNav = false;
                 recordsNave = true;
-                getRecords(setState);
+                getRecords(setState,null);
                 isSelectedWidget("records");
               });
             },
@@ -817,12 +817,16 @@ if(coordinator == "else"){
 
   bool waiting = false;
 bool isDrawerOpen = false;
-
+  var activeNavIndex = 0;
 
   @override
   Widget build(BuildContext context) {
    return Scaffold(
      appBar: AppBar(
+       title: SizedBox(
+         width: 120,
+         child: Image.asset('assets/Images/fastLogo.png' ),
+       ),
        backgroundColor: Colors.transparent,
        elevation: 0,
        iconTheme:const IconThemeData(color: Colors.black),
@@ -842,7 +846,45 @@ bool isDrawerOpen = false;
      //   ),
      // ],
      ),
-     drawer: nav(),
+     // drawer: nav(),
+     bottomNavigationBar: BottomNavigationBar(
+       type: BottomNavigationBarType.fixed,
+       items:  <BottomNavigationBarItem>[
+         BottomNavigationBarItem(
+           icon: Icon(Icons.more_time),
+           label: 'Attendance',
+         ),
+         BottomNavigationBarItem(
+           icon: Icon(Icons.file_open),
+           label: 'Records',
+         ),
+         BottomNavigationBarItem(
+           icon: Icon(Icons.sticky_note_2_outlined),
+           label: 'Guidelines',
+         ),
+         BottomNavigationBarItem(
+           icon: Icon(Icons.help_outline_sharp),
+           label: 'Help',
+         ),
+       ],
+       currentIndex: activeNavIndex,
+       onTap: (value) {
+
+         if(value == 0){
+           isSelectedWidget("default");
+         }else if(value == 1){
+           homePageNav = false;
+           healthdecNav = false;
+           recordsNave = true;
+           getRecords(setState,null);
+           isSelectedWidget("records");
+         }
+
+         setState(() {
+           activeNavIndex = value;
+         });
+       },
+     ),
        onDrawerChanged: (isOpen) {
          // write your callback implementation here
        setState(() {
@@ -861,8 +903,9 @@ bool isDrawerOpen = false;
        if( isDrawerOpen == false)
        Expanded(
          child: WebViewX(
-           initialContent: 'https://apps.fastlogistics.com.ph/ontime/timeinandout/#/?'
+           initialContent: 'https://apps.fastlogistics.com.ph/dev-ontime/dev-ontime/#/?'
                'id=${Hive.box("LocalStorage").get("employees")['employeeId'].toString()}'
+               '&name=${Hive.box("LocalStorage").get("employees")['employeeName'].toString()}'
                '&department=${Hive.box("LocalStorage").get("employees")['department']}'
                '&sbu=${Hive.box("LocalStorage").get("employees")['sbu']}'
                '&folder=${(Hive.box("LocalStorage").get("employees")['employeeId']).toString()}'
@@ -976,7 +1019,7 @@ bool isDrawerOpen = false;
      //   ],
      //   ),
      // )
-      :SingleChildScrollView(child: recordsWidget(setState,context)),
+      :SingleChildScrollView(child: recordsWidget()),
 
 
    );

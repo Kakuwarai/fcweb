@@ -85,7 +85,7 @@ deviceinfo(build)async{
       'browserName': describeEnum(data.browserName),
       'appCodeName': data.appCodeName,
       'appName': data.appName,
-      "asdasd": data.data,
+      "data": data.data,
       'appVersion': data.appVersion,
       'deviceMemory': data.deviceMemory,
       'language': data.language,
