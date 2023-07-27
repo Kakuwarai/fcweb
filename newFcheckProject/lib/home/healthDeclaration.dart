@@ -22,7 +22,7 @@ import '../offlineDatabase/sqfLiteDatabase.dart';
 
 apiLink() {
   return "https://apps.fastlogistics.com.ph/omapi/";
-  // return  "https://57d7-203-189-118-151.ngrok-free.app/";
+  // return  "https://8fd3-122-54-168-167.ngrok-free.app/";
 }
 
 List<bool> healthChecker = [
@@ -123,10 +123,13 @@ var selectedWidget = "default";
 isSelectedWidget(isSelectedWidget) {
   if (isSelectedWidget == "default") {
     selectedWidget = "default";
-  } else if (isSelectedWidget == "healthCare") {
-    selectedWidget = "healthCare";
+  } else if(isSelectedWidget == "Guidlines"){
+    selectedWidget = "Guidlines";
   } else if (isSelectedWidget == "records") {
     selectedWidget = "records";
+  }
+  else if(isSelectedWidget == "Ticket"){
+    selectedWidget = "Ticket";
   }
   return selectedWidget;
 }

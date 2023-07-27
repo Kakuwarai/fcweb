@@ -107,7 +107,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                   child: Column(
                     children: [
                       Column(children: [
-                        Text(bottom > 0?"":"IOS Version: 1.3.0",style: TextStyle(color: Colors.white),),
+                        Text(bottom > 0?"":"IOS Version: 1.3.4",style: TextStyle(color: Colors.white),),
                       ],),
                       Text(bottom > 0?"":
                         "OnTime Mobile",
@@ -186,7 +186,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
 
                             if(screenState ==0){
 
-                              var response = await http.post(Uri.parse("${apiLink()}api/FcEmployees/email"),
+                              var response = await http.post(Uri.parse("${apiLink()}api/FcEmployees/email1"),
                             body: {
                               "emailAddress": emailController.text,
                               "fcEmployees":employeeIdController.text,
@@ -212,7 +212,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                           }else{
 
 
-                              var response = await http.post(Uri.parse("${apiLink()}api/FcEmployees/verification"),
+                              var response = await http.post(Uri.parse("${apiLink()}api/FcEmployees/verification1"),
                                   body: {
                                 "fcEmployees":employeeIdController.text,
                                 "verificationCode": pinController.text,
@@ -404,7 +404,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                       device = "${await deviceinfo("brand")}  ${await deviceinfo("model")}";
                       deviceId = "";"${await deviceinfo("id")}${await deviceinfo("hardware")}${await deviceinfo("manufacturer")}${await deviceinfo("model")}";
                     }
-                    var response = await http.post(Uri.parse("${apiLink()}api/FcEmployees/email"),
+                    var response = await http.post(Uri.parse("${apiLink()}api/FcEmployees/email1"),
                         body: {
                         "emailAddress": emailController.text,
                         "fcEmployees":employeeIdController.text,

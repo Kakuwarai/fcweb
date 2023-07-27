@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:custom_line_indicator_bottom_navbar/custom_line_indicator_bottom_navbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:intl/intl.dart';
 import 'package:newfcheckproject/home/healthDeclaration.dart';
 import 'package:newfcheckproject/home/recordsWidget.dart';
@@ -13,6 +15,7 @@ import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:webviewx/webviewx.dart';
 import '../deviceInfo.dart';
+import '../forIOS.dart';
 import '../officeAndWFH/WFHWidget.dart';
 import '../officeAndWFH/officeWidget.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
@@ -246,7 +249,6 @@ class _homeScreen extends State<homeScreen> with TickerProviderStateMixin {
                 homePageNav = false;
                 healthdecNav = false;
                 recordsNave = true;
-                getRecords(setState,null);
                 isSelectedWidget("records");
               });
             },
@@ -459,7 +461,7 @@ if(coordinator == "else"){
 
     var dateTime = DateFormat("yyyy/MM/dd").format(d).toString();
     var response = await http.post(
-        Uri.parse("${apiLink()}api/FcAttendances/gettimeinoutSite"),
+        Uri.parse("${apiLink()}api/FcAttendances/gettimeinoutSite1"),
         body: {
           "employeeId":Hive.box("LocalStorage").get("employees")["employeeId"].toString(),
           //"employeeId":(await DBProvider.db.getEmployeesData("Id")).toString(),
@@ -637,7 +639,7 @@ if(coordinator == "else"){
 
 
                   var request = http.MultipartRequest('POST',
-                      Uri.parse("${apiLink()}api/FcAttendances/uploadFile"));
+                      Uri.parse("${apiLink()}api/FcAttendances/uploadFile1"));
 
                   // request.fields['employeeId'] =
                   //     (allData[0]['employeeId']).toString();
@@ -733,7 +735,7 @@ if(coordinator == "else"){
                   }
 
                   var request = http.MultipartRequest('POST', Uri.parse(
-                      "${apiLink()}api/FcAttendances/uploadFileTimeOut"));
+                      "${apiLink()}api/FcAttendances/uploadFileTimeOut1"));
                   request.fields['folder'] =
                       (Hive.box("LocalStorage").get("employees")['employeeId']).toString();
                   request.fields['fileName'] = DateFormat("yyyy dd MM").format(datetimenow).toString();
@@ -847,28 +849,32 @@ bool isDrawerOpen = false;
      // ],
      ),
      // drawer: nav(),
-     bottomNavigationBar: BottomNavigationBar(
-       type: BottomNavigationBarType.fixed,
-       items:  <BottomNavigationBarItem>[
-         BottomNavigationBarItem(
-           icon: Icon(Icons.more_time),
-           label: 'Attendance',
+     bottomNavigationBar: CustomLineIndicatorBottomNavbar(
+       customBottomBarItems: [
+         CustomBottomBarItems(
+           label: 'Home',
+           icon: Icons.more_time,
          ),
-         BottomNavigationBarItem(
-           icon: Icon(Icons.file_open),
+         CustomBottomBarItems(
            label: 'Records',
+           icon: Icons.file_open,
          ),
-         BottomNavigationBarItem(
-           icon: Icon(Icons.sticky_note_2_outlined),
-           label: 'Guidelines',
-         ),
-         BottomNavigationBarItem(
-           icon: Icon(Icons.help_outline_sharp),
+         CustomBottomBarItems(
+             label: 'Guidelines',
+             icon: Icons.sticky_note_2_outlined),
+         CustomBottomBarItems(
            label: 'Help',
+           icon: Icons.help_outline_sharp,
          ),
+
        ],
+
+       selectedColor: Colors.blue,
+       unSelectedColor: Colors.black54,
+       backgroundColor: Colors.white,
        currentIndex: activeNavIndex,
-       onTap: (value) {
+       selectedIconSize: 25,
+       onTap: (value) async{
 
          if(value == 0){
            isSelectedWidget("default");
@@ -876,8 +882,14 @@ bool isDrawerOpen = false;
            homePageNav = false;
            healthdecNav = false;
            recordsNave = true;
-           getRecords(setState,null);
            isSelectedWidget("records");
+         }else if(value == 2){
+           //isSelectedWidget("Guidlines");
+           functionCallGuidelines();
+           //await FlutterWebBrowser.openWebPage(url:  "https://apps.fastlogistics.com.ph/fastdrive/ontimeinstaller/OntimeMobile-Guidelines.pdf");
+         }else if (value == 3){
+           functionCallTicket();
+          // await FlutterWebBrowser.openWebPage(url:  "https://ticket.fastlogistics.com.ph/open.php");
          }
 
          setState(() {
@@ -903,7 +915,7 @@ bool isDrawerOpen = false;
        if( isDrawerOpen == false)
        Expanded(
          child: WebViewX(
-           initialContent: 'https://apps.fastlogistics.com.ph/dev-ontime/dev-ontime/#/?'
+           initialContent: 'https://apps.fastlogistics.com.ph/ontime/timeinandout/#/?'
                'id=${Hive.box("LocalStorage").get("employees")['employeeId'].toString()}'
                '&name=${Hive.box("LocalStorage").get("employees")['employeeName'].toString()}'
                '&department=${Hive.box("LocalStorage").get("employees")['department']}'
@@ -1019,7 +1031,18 @@ bool isDrawerOpen = false;
      //   ],
      //   ),
      // )
-      :SingleChildScrollView(child: recordsWidget()),
+      :cSelectedWidget() == "records"?
+      SingleChildScrollView(child: recordsWidget()):
+      cSelectedWidget() == "Guidlines"?
+      SingleChildScrollView(child: WebViewX(
+   initialContent: 'https://apps.fastlogistics.com.ph/fastdrive/ontimeinstaller/OntimeMobile-Guidelines.pdf',
+     width: MediaQuery.of(context).size.width,
+     height: MediaQuery.of(context).size.height,
+   ),):SingleChildScrollView(child: WebViewX(
+        initialContent: 'https://ticket.fastlogistics.com.ph/open.php',
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+      ),),
 
 
    );

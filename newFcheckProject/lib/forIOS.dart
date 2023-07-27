@@ -16,10 +16,16 @@ class forIOS extends StatefulWidget {
   State<forIOS> createState() => ForIOS();
 }
 
+
+functionCallGuidelines()async{
+  return window.location.href = 'https://apps.fastlogistics.com.ph/fastdrive/ontimeinstaller/OntimeMobile-Guidelines.pdf';
+}
+functionCallTicket()async{
+  return window.location.href = 'https://ticket.fastlogistics.com.ph/open.php';
+}
 class ForIOS extends State<forIOS> with TickerProviderStateMixin {
 
   var platform = "";
-  var devices = "";
 
   @override
   void initState() {
@@ -37,22 +43,13 @@ class ForIOS extends State<forIOS> with TickerProviderStateMixin {
          var type = Hive.box("LocalStorage").get("employees") == null?null:Hive.box("LocalStorage").get("employees")["id"];
          Navigator.pushReplacementNamed(context, type.toString() != "null"?"/homeScreen":"/authenticationLogin");
        }
-       devices = await Hive.box("LocalStorage").get("test")??"NULL";
+
        setState(() {
      });
 
   }
 
-  test()async{
-    var rng = await Random();
-var newrng = rng.nextInt(100).toString();
-    await Hive.box("LocalStorage").put("test", await newrng);
-    devices = await newrng;
-    print(devices);
-    setState(() {
 
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +59,10 @@ var newrng = rng.nextInt(100).toString();
         children: [
           Center(
               child: Text(
-            "For IOS Users Only!\n${platform}\n${devices}",
+            "For IOS Users Only!\n",
             style: TextStyle(fontSize: 30),
           )),
 SizedBox(height: 20,),
-          TextButton(onPressed: (){test();}, child: Text("click")),
           TextButton.icon(
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: Colors.red),
