@@ -429,7 +429,7 @@ class SiteWidgets extends State<recordsWidget> with TickerProviderStateMixin {
                   dialogChooseSubordinate();
                 }, child:
                 Text(employeeId == ''? "Subordinate List": employeeId.contains(",")?"Multiselect List":
-                subordinateList.firstWhere((element) => element['employeeId'] == employeeId)["fullname"])
+                records.length == 0? 'Subordinate List':records[0]["fullname"])
                 ),
                 SizedBox(width: 8.0,),
                 ElevatedButton(

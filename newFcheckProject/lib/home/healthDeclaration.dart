@@ -21,7 +21,7 @@ import 'package:ntp/ntp.dart';
 import '../offlineDatabase/sqfLiteDatabase.dart';
 
 apiLink() {
-  return "https://apps.fastlogistics.com.ph/omapi/";
+  return "https://apps.fastlogistics.com.ph/devomapi/";
   // return  "https://8fd3-122-54-168-167.ngrok-free.app/";
 }
 
@@ -408,6 +408,149 @@ statusDialog(context, statusMessage, status) {
       icon: functionestatusDialogicons(status),
       title: Text(statusMessage),
       actions: [
+        ElevatedButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.green),
+            onPressed: () async {
+              Navigator.pop(context, true);
+            },
+            child: const Text('Ok')),
+      ],
+    ),
+  );
+}
+
+versionDialog(context) {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+
+      title: Row(
+        children: [
+          Text("Version Log "),
+          Icon(
+              Icons.history_edu_sharp
+          ),
+        ],
+      ),
+      actions: [
+        Container(
+          height: 400,
+          child: Scrollbar(
+            thumbVisibility: true,
+            thickness: 10,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+
+                  ListTile(
+                    title: Text("Latest version 1.3.7 (Aug 28 2023)"),
+                    subtitle: Text("\u2022 New added versions log list\n"
+                        "\u2022 New added ONTIME notification\n"
+                        "\u2022 Fix slow location loading\n"
+                        "\u2022 New location process for faster processing\n"
+                        "\u2022 New timezone process"
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.3.6 (Aug 10 2023)"),
+                    subtitle: Text("\u2022 IOS loading fixed\n"
+
+                        "\u2022 Records subordinate view bug fix(selection of subordinate bug)"
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.3.5 (July 26 2023)"),
+                    subtitle: Text("\u2022 Minimal UI loading fixed\n"
+
+                        "\u2022 Time in fixed"
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.3.4 (July 19 2023)"),
+                    subtitle: Text("\u2022 Minimal UI size change\n"
+                        "\u2022 Users with subordinates can now multiple select\n"
+                        "\u2022 New API implementation (After the update, versions 1.3.3 and below will not work anymore)\n"
+                        "\u2022 Records viewing bigger size image fixed\n"
+                        "\u2022 Future updates will now lock the app to force users to update to a newer version"
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.3.3 (July 13 2023)"),
+                    subtitle: Text("\u2022 Smaller UI\n"
+                        "\u2022 New Time out system (Night shifts, Note: However the time in and out will not be shown)\n"
+                        "\u2022 Records Filter (You can now select which date you want to see\n"
+                        "\u2022 Subordinate Tracker (If the user has subordinates, you can now preview their records)"
+
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.3.1 (July 07 2023)"),
+                    subtitle: Text("\u2022 Minimal UI loading fixed\n"
+                        "\u2022 New UI Update\n"
+                        "\u2022 Attendace will now show images\n"
+                        "\u2022 Separate time in/out work place\n"
+                        "\u2022 DITO SIM connection Fixed\n"
+                        "\u2022 IOS time in/out success validation"
+
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.2.3 (Jun 29 2023)"),
+                    subtitle: Text("\u2022 Image view in records\n"
+                        "\u2022 employeeId starts with 0 will not record in dtr fixed(𝐧𝐨𝐭𝐞 𝐢𝐟 𝐲𝐨𝐮𝐫 𝐈𝐝 𝐬𝐭𝐚𝐫𝐭𝐬 𝐰𝐢𝐭𝐡 𝟎, 𝐩𝐥𝐞𝐚𝐬𝐞 𝐫𝐞𝐥𝐨𝐠𝐢𝐧 𝐨𝐫 𝐫𝐞𝐢𝐧𝐬𝐭𝐚𝐥𝐥 𝐚𝐩𝐩)"
+
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.2.2"),
+                    subtitle: Text(""
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.2.1 (Jun 19 2023)"),
+                    subtitle: Text("\u2022 Login email validations \n"
+                        "\u2022 Time in/out validation for checking attendance, getting location, processing time in/out\n"
+                        "\u2022 New UI update\n"
+                        "\u2022 Work places type: Office, WFH and OBT type"
+
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.2.0"),
+                    subtitle: Text(""
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.1.0 (Jun 07 2023)"),
+                    subtitle: Text("\u2022 Minimal UI loading fixed\n"
+                        "\u2022 Application update checker(checking for new updates)\n"
+                        "\u2022 UI update\n"
+                        "\u2022 Image size compressor update(lighter file transfer)\n"
+                        "\u2022 Location in and out preview\n"
+                        "\u2022 Date preview\n"
+                        "\u2022 Much faster time in/out response\n"
+                        "\u2022 More validations for please wait\n"
+                        "\u2022 Refresh when slide down\n"
+                        "\u2022 Screenshot available\n"
+                        "\u2022 Android & windows user can't access IOS Web anymore\n"
+                        "\u2022 Safari browser supported (multiple supported browser)\n"
+                        "\u2022 Image auto lower resolution\n"
+                        "\u2022 Faster time in/out\n"
+                        "\u2022 Gallery access to capture only feature\n"
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Version 1.0.0 - Version 1.0.5"),
+                    subtitle: Text(""
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+
+        ,
         ElevatedButton(
             style: TextButton.styleFrom(backgroundColor: Colors.green),
             onPressed: () async {

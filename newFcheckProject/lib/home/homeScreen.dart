@@ -4,41 +4,26 @@ import 'package:custom_line_indicator_bottom_navbar/custom_line_indicator_bottom
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_session_manager/flutter_session_manager.dart';
-import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:intl/intl.dart';
 import 'package:newfcheckproject/home/healthDeclaration.dart';
 import 'package:newfcheckproject/home/recordsWidget.dart';
-
-import 'package:newfcheckproject/offlineDatabase/sqfLiteDatabase.dart';
 import 'package:http/http.dart' as http;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:webviewx/webviewx.dart';
 import '../deviceInfo.dart';
 import '../forIOS.dart';
-import '../officeAndWFH/WFHWidget.dart';
-import '../officeAndWFH/officeWidget.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-
-
-import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
-import 'package:http/http.dart' as http;
 import 'dart:html' as html;
 import 'dart:typed_data';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
-import '../home/healthDeclaration.dart';
-import '../home/homeScreen.dart';
+
 
 class homeScreen extends StatefulWidget {
   const homeScreen({Key? key,}):super(key: key);
@@ -75,6 +60,7 @@ class _homeScreen extends State<homeScreen> with TickerProviderStateMixin {
     forIos();
     var type = Hive.box("LocalStorage").get("employees") == null?null:Hive.box("LocalStorage").get("employees")["id"];
 
+    print("");
     if(type == null || type == "[]" || type == ""){
       Navigator.of(context).pushReplacementNamed("/authenticationLogin");
     }
@@ -114,10 +100,12 @@ class _homeScreen extends State<homeScreen> with TickerProviderStateMixin {
        // OfficeSLider(btnOffice.index);
       });
 
-    });
-
+    });;
     super.initState();
   }
+
+
+
 
   forIos()async{
 
@@ -510,19 +498,19 @@ if(coordinator == "else"){
   Position position=Position(longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 0, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0);
   List<Placemark> placemarks = [];
 
-  nominatim()async{
-
-    var response = await http.get(Uri.parse("https://nominatim.openstreetmap.org/reverse?lat=${position.latitude}&lon=${position.longitude}&format=json"),
-    );
-
-    var temp = jsonDecode(response.body)["display_name"];
-    var trimSplit = temp.toString().trim().split(',');
-    location = "${trimSplit[0]} ${trimSplit[1]} ${trimSplit[2]} ${trimSplit[3]} ${trimSplit[4]}";
-    setState(() {
-
-    });
-
-  }
+  // nominatim()async{
+  //
+  //   var response = await http.get(Uri.parse("https://nominatim.openstreetmap.org/reverse?lat=${position.latitude}&lon=${position.longitude}&format=json"),
+  //   );
+  //
+  //   var temp = jsonDecode(response.body)["display_name"];
+  //   var trimSplit = temp.toString().trim().split(',');
+  //   location = "${trimSplit[0]} ${trimSplit[1]} ${trimSplit[2]} ${trimSplit[3]} ${trimSplit[4]}";
+  //   setState(() {
+  //
+  //   });
+  //
+  // }
 
   main(context) async{
 
@@ -547,7 +535,7 @@ if(coordinator == "else"){
             desiredAccuracy: LocationAccuracy.bestForNavigation);
 
 
-        await nominatim();
+        // await nominatim();
 
 
         //print();
@@ -825,6 +813,17 @@ bool isDrawerOpen = false;
   Widget build(BuildContext context) {
    return Scaffold(
      appBar: AppBar(
+       actions: <Widget>[
+         IconButton(
+           icon: Icon(
+             Icons.history_edu_sharp,
+             color: Colors.black,
+           ),
+           onPressed: () {
+             versionDialog(context);
+           },
+         )
+       ],
        title: SizedBox(
          width: 120,
          child: Image.asset('assets/Images/fastLogo.png' ),
@@ -915,10 +914,11 @@ bool isDrawerOpen = false;
        if( isDrawerOpen == false)
        Expanded(
          child: WebViewX(
-           initialContent: 'https://apps.fastlogistics.com.ph/ontime/timeinandout/#/?'
+           initialContent: 'https://apps.fastlogistics.com.ph/dev-ontime/timeinandout/#/?'
                'id=${Hive.box("LocalStorage").get("employees")['employeeId'].toString()}'
                '&name=${Hive.box("LocalStorage").get("employees")['employeeName'].toString()}'
                '&department=${Hive.box("LocalStorage").get("employees")['department']}'
+
                '&sbu=${Hive.box("LocalStorage").get("employees")['sbu']}'
                '&folder=${(Hive.box("LocalStorage").get("employees")['employeeId']).toString()}'
                '&fileName=${DateFormat("yyyy dd MM").format(DateTime.now()).toString()}',

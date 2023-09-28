@@ -107,7 +107,7 @@ class _authenticationLogin extends State<authenticationLogin> with TickerProvide
                   child: Column(
                     children: [
                       Column(children: [
-                        Text(bottom > 0?"":"IOS Version: 1.3.4",style: TextStyle(color: Colors.white),),
+                        Text(bottom > 0?"":"IOS Version: 1.3.7",style: TextStyle(color: Colors.white),),
                       ],),
                       Text(bottom > 0?"":
                         "OnTime Mobile",
